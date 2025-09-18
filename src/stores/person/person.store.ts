@@ -29,7 +29,7 @@ export const usePersonStore = create<PersonStore>()(
   // logger(
   persist(devtools(storeAPI), {
     name: "person-store",
-    storage: firebaseStorage,
+    // storage: firebaseStorage,
   })
   // )
 );
