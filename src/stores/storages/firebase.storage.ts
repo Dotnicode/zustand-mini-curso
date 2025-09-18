@@ -9,7 +9,6 @@ const firebaseAPI: StateStorage = {
       const data = await fetch(`${firebaseUrl}/${name}.json`).then((res) =>
         res.json()
       );
-      console.log(data);
       return JSON.stringify(data);
     } catch (error) {
       return null;
@@ -22,7 +21,6 @@ const firebaseAPI: StateStorage = {
     }).then((res) => res.json());
   },
   removeItem: function (name: string): unknown {
-    console.log("removeItem", name);
     return null;
   },
 };
