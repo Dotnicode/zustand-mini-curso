@@ -1,10 +1,19 @@
+import { useShallow } from "zustand/shallow";
 import { JiraTasks } from "../../components";
 import { useTaskStore } from "../../stores";
 
 export const JiraPage = () => {
-  const tasks = useTaskStore((state) => state.tasks);
+  const pendingTasks = useTaskStore(
+    useShallow((state) => state.getTaskByStatus("open"))
+  );
+  const inProgressTasks = useTaskStore(
+    useShallow((state) => state.getTaskByStatus("in-progress"))
+  );
+  const doneTasks = useTaskStore(
+    useShallow((state) => state.getTaskByStatus("done"))
+  );
 
-  console.log(tasks);
+  console.log({ pendingTasks, inProgressTasks, doneTasks });
 
   return (
     <>
