@@ -1,5 +1,5 @@
 import { create, StateCreator } from "zustand";
-import { Task, TaskStatus } from "../../interfaces";
+import type { Task, TaskStatus } from "../../interfaces";
 
 interface TaskState {
   tasks: Record<string, Task>;
