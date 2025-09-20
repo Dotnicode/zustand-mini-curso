@@ -1,6 +1,7 @@
 import { create, StateCreator } from "zustand";
 import type { Task, TaskStatus } from "../../interfaces";
 import { devtools } from "zustand/middleware";
+import { IoReturnUpForward } from "react-icons/io5";
 
 interface TaskState {
   tasks: Record<string, Task>;
@@ -9,6 +10,7 @@ interface TaskState {
   setDragginTaskId: (taskId: string) => void;
   removeDragginTaskId: () => void;
   changeTaskStatus: (taskId: string, status: TaskStatus) => void;
+  onTaskDrop: (status: TaskStatus) => void;
 }
 
 const storeApi: StateCreator<TaskState, [["zustand/devtools", never]]> = (
@@ -58,6 +60,14 @@ const storeApi: StateCreator<TaskState, [["zustand/devtools", never]]> = (
         [taskId]: task,
       },
     }));
+  },
+  onTaskDrop: (status: TaskStatus) => {
+    const taskId = get().dragginTaskId;
+
+    if (!taskId) return;
+
+    get().changeTaskStatus(taskId, status);
+    get().removeDragginTaskId();
   },
 });
 
