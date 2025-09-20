@@ -1,7 +1,6 @@
 import { create, StateCreator } from "zustand";
-import type { Task, TaskStatus } from "../../interfaces";
 import { devtools } from "zustand/middleware";
-import { IoReturnUpForward } from "react-icons/io5";
+import type { Task, TaskStatus } from "../../interfaces";
 
 interface TaskState {
   tasks: Record<string, Task>;
