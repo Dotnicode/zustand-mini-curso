@@ -4,11 +4,32 @@ import { useWeddingBoundStore } from "../../stores/wedding";
 export const WeddingInvitationPage = () => {
   const firstName = useWeddingBoundStore((state) => state.firstName);
   const lastName = useWeddingBoundStore((state) => state.lastName);
-  const guestCount = useWeddingBoundStore((state) => state.guestCount);
-
   const setFirstName = useWeddingBoundStore((state) => state.setFirstName);
   const setLastName = useWeddingBoundStore((state) => state.setLastName);
   const setGuestCount = useWeddingBoundStore((state) => state.setGuestCount);
+
+  const guestCount = useWeddingBoundStore((state) => state.guestCount);
+
+  const eventYYYYMMDD = useWeddingBoundStore((state) => state.eventYYYYMMDD());
+  const eventHHMM = useWeddingBoundStore((state) => state.eventHHMM());
+  const setEventDate = useWeddingBoundStore((state) => state.setEventDate);
+  const setEventTime = useWeddingBoundStore((state) => state.setEventTime);
+
+  const isConfirmed = useWeddingBoundStore((state) => state.isConfirmed);
+  const setIsConfirmed = useWeddingBoundStore((state) => state.setIsConfirmed);
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    console.log({
+      firstName,
+      lastName,
+      guestCount,
+      eventYYYYMMDD,
+      eventHHMM,
+      isConfirmed,
+    });
+  };
 
   return (
     <>
@@ -18,7 +39,7 @@ export const WeddingInvitationPage = () => {
 
       <WhiteCard className="flex items-center justify-center p-12">
         <div className="mx-auto w-full max-w-[550px]">
-          <form>
+          <form onSubmit={onSubmit}>
             <div className="-mx-3 flex flex-wrap">
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
@@ -49,6 +70,7 @@ export const WeddingInvitationPage = () => {
                 </div>
               </div>
             </div>
+
             <div className="mb-5">
               <label className="mb-3 block text-base font-medium text-[#07074D]">
                 ¿Cuántos invitados traerá?
@@ -71,7 +93,13 @@ export const WeddingInvitationPage = () => {
                   <label className="mb-3 block text-base font-medium text-[#07074D]">
                     Fecha de evento
                   </label>
-                  <input type="date" name="eventDate" id="eventDate" />
+                  <input
+                    type="date"
+                    name="eventDate"
+                    id="eventDate"
+                    value={eventYYYYMMDD}
+                    onChange={(e) => setEventDate(e.target.value)}
+                  />
                 </div>
               </div>
               <div className="w-full px-3 sm:w-1/2">
@@ -79,7 +107,13 @@ export const WeddingInvitationPage = () => {
                   <label className="mb-3 block text-base font-medium text-[#07074D]">
                     Hora del evento
                   </label>
-                  <input type="time" name="eventTime" id="eventTime" />
+                  <input
+                    type="time"
+                    name="eventTime"
+                    id="eventTime"
+                    value={eventHHMM}
+                    onChange={(e) => setEventTime(e.target.value)}
+                  />
                 </div>
               </div>
             </div>
@@ -95,6 +129,8 @@ export const WeddingInvitationPage = () => {
                     name="isComing"
                     id="radioButton1"
                     className="h-5 w-5"
+                    checked={isConfirmed}
+                    onChange={() => setIsConfirmed(true)}
                   />
                   <label className="pl-3 text-base font-medium text-[#07074D]">
                     Si
@@ -106,6 +142,8 @@ export const WeddingInvitationPage = () => {
                     name="isComing"
                     id="radioButton2"
                     className="h-5 w-5"
+                    checked={!isConfirmed}
+                    onChange={() => setIsConfirmed(false)}
                   />
                   <label className="pl-3 text-base font-medium text-[#07074D]">
                     No
