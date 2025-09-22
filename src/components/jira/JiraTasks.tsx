@@ -1,40 +1,52 @@
-import { DragEvent, useState } from "react";
-import {
-  IoCheckmarkCircleOutline,
-  IoEllipsisHorizontalOutline,
-} from "react-icons/io5";
-import { Task, TaskStatus } from "../../interfaces";
-import { SingleTask } from "./SingleTask";
-import { useTaskStore } from "../../stores";
 import classNames from "classnames";
+import { DragEvent, useState } from "react";
+import { IoAddOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
+import { Task, TaskStatus } from "../../interfaces";
+import { useTaskStore } from "../../stores";
+import { SingleTask } from "./SingleTask";
+import Swal from "sweetalert2";
 
 interface Props {
   title: string;
   tasks: Task[];
-  value: TaskStatus;
+  status: TaskStatus;
 }
 
-export const JiraTasks = ({ title, value, tasks }: Props) => {
+export const JiraTasks = ({ title, status, tasks }: Props) => {
   const isDragging = useTaskStore((state) => !!state.dragginTaskId);
   const onTaskDrop = useTaskStore((state) => state.onTaskDrop);
+  const addTask = useTaskStore((state) => state.addTask);
 
   const [onDragOver, setOnDragOver] = useState(false);
+
+  const handleAddTask = async () => {
+    const { isConfirmed, value } = await Swal.fire({
+      title: "Nueva tarea",
+      input: "text",
+      inputLabel: "Nombre de la tarea",
+      inputPlaceholder: "Ingrese el nombre de la tarea",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) return "Debe de ingresar un nombre para la tarea";
+      },
+    });
+
+    if (!isConfirmed) return;
+    addTask(value, status);
+  };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setOnDragOver(true);
-    console.log("onDragOver");
   };
   const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setOnDragOver(false);
-    console.log("onDragLeave");
   };
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setOnDragOver(false);
-
-    onTaskDrop(value);
+    onTaskDrop(status);
   };
 
   return (
@@ -60,8 +72,8 @@ export const JiraTasks = ({ title, value, tasks }: Props) => {
           <h4 className="ml-4 text-xl font-bold text-navy-700">{title}</h4>
         </div>
 
-        <button>
-          <IoEllipsisHorizontalOutline />
+        <button onClick={handleAddTask}>
+          <IoAddOutline />
         </button>
       </div>
 

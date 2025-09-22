@@ -1,21 +1,22 @@
 import { create, StateCreator } from "zustand";
 import { devtools } from "zustand/middleware";
 import type { Task, TaskStatus } from "../../interfaces";
+import { v4 as uuidv4 } from "uuid";
 
 interface TaskState {
   tasks: Record<string, Task>;
   dragginTaskId?: string;
+
   getTaskByStatus: (status: TaskStatus) => Task[];
+  addTask: (title: string, status: TaskStatus) => void;
+
   setDragginTaskId: (taskId: string) => void;
   removeDragginTaskId: () => void;
   changeTaskStatus: (taskId: string, status: TaskStatus) => void;
   onTaskDrop: (status: TaskStatus) => void;
 }
 
-const storeApi: StateCreator<TaskState, [["zustand/devtools", never]]> = (
-  set,
-  get
-) => ({
+const storeApi: StateCreator<TaskState> = (set, get) => ({
   tasks: {
     "ABC-1": {
       id: "ABC-1",
@@ -43,11 +44,21 @@ const storeApi: StateCreator<TaskState, [["zustand/devtools", never]]> = (
   getTaskByStatus: (status: TaskStatus) => {
     return Object.values(get().tasks).filter((task) => task.status === status);
   },
+  addTask: (title: string, status: TaskStatus) => {
+    const newTask: Task = { id: uuidv4(), title, status };
+
+    set((state) => ({
+      tasks: {
+        ...state.tasks,
+        [newTask.id]: newTask,
+      },
+    }));
+  },
   setDragginTaskId: (taskId) => {
     set({ dragginTaskId: taskId });
   },
   removeDragginTaskId: () => {
-    set({ dragginTaskId: undefined }, false, "removeDragginTaskId");
+    set({ dragginTaskId: undefined });
   },
   changeTaskStatus: (taskId: string, status: TaskStatus) => {
     const task = get().tasks[taskId];
