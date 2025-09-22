@@ -1,7 +1,8 @@
 import { create, StateCreator } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import type { Task, TaskStatus } from "../../interfaces";
 import { v4 as uuidv4 } from "uuid";
+import { immer } from "zustand/middleware/immer";
 
 interface TaskState {
   tasks: Record<string, Task>;
@@ -9,14 +10,17 @@ interface TaskState {
 
   getTaskByStatus: (status: TaskStatus) => Task[];
   addTask: (title: string, status: TaskStatus) => void;
-
+  totalTasks: () => number;
   setDragginTaskId: (taskId: string) => void;
   removeDragginTaskId: () => void;
   changeTaskStatus: (taskId: string, status: TaskStatus) => void;
   onTaskDrop: (status: TaskStatus) => void;
 }
 
-const storeApi: StateCreator<TaskState> = (set, get) => ({
+const storeApi: StateCreator<TaskState, [["zustand/immer", never]]> = (
+  set,
+  get
+) => ({
   tasks: {
     "ABC-1": {
       id: "ABC-1",
@@ -47,12 +51,13 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
   addTask: (title: string, status: TaskStatus) => {
     const newTask: Task = { id: uuidv4(), title, status };
 
-    set((state) => ({
-      tasks: {
-        ...state.tasks,
-        [newTask.id]: newTask,
-      },
-    }));
+    set((state) => {
+      state.tasks[newTask.id] = newTask;
+    });
+  },
+  totalTasks: () => {
+    const totalTasks = Object.keys(get().tasks).length;
+    return totalTasks;
   },
   setDragginTaskId: (taskId) => {
     set({ dragginTaskId: taskId });
@@ -62,14 +67,11 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
   },
   changeTaskStatus: (taskId: string, status: TaskStatus) => {
     const task = get().tasks[taskId];
-    task.status = status;
+    if (!task) return;
 
-    set((state) => ({
-      tasks: {
-        ...state.tasks,
-        [taskId]: task,
-      },
-    }));
+    set((state) => {
+      state.tasks[task.id].status = status;
+    });
   },
   onTaskDrop: (status: TaskStatus) => {
     const taskId = get().dragginTaskId;
@@ -81,4 +83,6 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
   },
 });
 
-export const useTaskStore = create<TaskState>()(devtools(storeApi));
+export const useTaskStore = create<TaskState>()(
+  persist(devtools(immer(storeApi)), { name: "task-store" })
+);
