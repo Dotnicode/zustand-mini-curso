@@ -52,6 +52,7 @@ export const WeddingInvitationPage = () => {
                     id="firstName"
                     placeholder="Primer Nombre"
                     onChange={(e) => setFirstName(e.target.value)}
+                    value={firstName}
                   />
                 </div>
               </div>
@@ -66,6 +67,7 @@ export const WeddingInvitationPage = () => {
                     id="lastName"
                     placeholder="Apellido"
                     onChange={(e) => setLastName(e.target.value)}
+                    value={lastName}
                   />
                 </div>
               </div>
