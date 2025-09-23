@@ -1,7 +1,15 @@
 
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuthStore } from '../stores';
 
 export const AuthLayout = () => {
+  const authStatus = useAuthStore(state => state.status);
+  
+
+  if(authStatus === 'authorize') {
+    return <Navigate to="/dashboard" replace />
+  }
+  
   return (
     <div className="bg-gray-100 flex justify-center items-center h-screen">
       <div className="w-1/2 h-screen hidden lg:flex lg:flex-col items-center justify-center bg-indigo-700">
