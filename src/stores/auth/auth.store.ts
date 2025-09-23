@@ -10,6 +10,7 @@ export interface AuthState {
 
   loginUser: (email: string, password: string) => Promise<void>;
   checkAuthStatus: () => Promise<void>;
+  logout: () => void;
 }
 
 const storeApi: StateCreator<AuthState> = (set) => ({
@@ -34,6 +35,10 @@ const storeApi: StateCreator<AuthState> = (set) => ({
       set({ status: "unauthorized", token: undefined, user: undefined });
     }
   },
+
+  logout: () => {
+    set({ status: "unauthorized", token: undefined, user: undefined });
+  }
 });
 
 export const useAuthStore = create<AuthState>()(
